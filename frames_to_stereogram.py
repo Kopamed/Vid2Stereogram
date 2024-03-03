@@ -5,10 +5,10 @@ import skvideo.io
 from skimage import color
 import os
 import time
+from tqdm import tqdm
 
-def main():
-    image_folder = "saved_frames_real_round3"
-    image_files = os.listdir(image_folder)
+def convert_depth_frames_to_video(frames_folder="input/example_frames", output_video="output/outputvideo.mp4"):
+    image_files = os.listdir(frames_folder)
     frame_converter = StereogramConverter()
 
     # Generate a more uniform texture pattern
@@ -20,10 +20,11 @@ def main():
     #for i in range(0, width, stripe_width * 2):
      #   texture_pattern[:, i:i + stripe_width] = 64  # Dark stripes on a black background
 
-    with skvideo.io.FFmpegWriter("outputvideofinal2texture.mp4") as video_writer:
+    with skvideo.io.FFmpegWriter(output_frame) as video_writer:
+        pbar = tqdm(total=len(image_files), unit="frame")
+
         for i in range(len(image_files)):
-            start_time = time.time()
-            image_path = os.path.join(image_folder, f"frame{i}.png")
+            image_path = os.path.join(frames_folder, f"{i}.png")
             image_data = np.array(mpimg.imread(image_path) * 255, dtype=int)
             image_data = 255 - image_data
 
@@ -35,7 +36,9 @@ def main():
             output_frame = image_data.astype(np.uint8)
             output_frame = color.gray2rgb(output_frame)
             video_writer.writeFrame(output_frame)
-            print(f"Frame {i} processed in {time.time() - start_time} seconds")
+            pbar.update(1)
+        
+        pbar.close()
 
 if __name__ == "__main__":
-    main()
+    convert_depth_frames_to_video()
