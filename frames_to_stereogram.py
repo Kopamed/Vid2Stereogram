@@ -20,7 +20,7 @@ def convert_depth_frames_to_video(frames_folder="input/example_frames", output_v
     #for i in range(0, width, stripe_width * 2):
      #   texture_pattern[:, i:i + stripe_width] = 64  # Dark stripes on a black background
 
-    with skvideo.io.FFmpegWriter(output_frame) as video_writer:
+    with skvideo.io.FFmpegWriter(output_video) as video_writer:
         pbar = tqdm(total=len(image_files), unit="frame")
 
         for i in range(len(image_files)):
